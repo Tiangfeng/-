@@ -30,6 +30,9 @@
               <el-button link type="primary" size="small" >删除</el-button>
             </template>
           </el-popconfirm>
+          <el-button link type="primary" size="small" @click="handleDetails(scope.row)"
+          >详情</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -82,6 +85,39 @@
           </span>
         </template>
       </el-dialog>
+
+<!--      员工详情信息-->
+      <el-dialog
+          v-model="detailsVisible"
+          title="获奖情况"
+          width="60%"
+      >
+
+        <el-table :data="details" border stripe style="width: 100%">
+          <el-table-column prop="description" label="经历" sortable />
+          <el-table-column prop="time" label="时间" />
+<!--          <el-table-column prop="nickname" label="昵称" />-->
+<!--          <el-table-column prop="age" label="年龄" />-->
+<!--          <el-table-column prop="sex" label="性别" />-->
+<!--          <el-table-column prop="address" label="地址" />-->
+<!--          <el-table-column fixed="right" label="操作" width="120">-->
+<!--            <template #default="scope">-->
+<!--              <el-button link type="primary" size="small" @click="handleEdit(scope.row)"-->
+<!--              >编辑</el-button-->
+<!--              >-->
+<!--              <el-popconfirm title="确定要删除这一项吗?" @confirm="handleDelete(scope.row.id)">-->
+<!--                <template #reference>-->
+<!--                  <el-button link type="primary" size="small" >删除</el-button>-->
+<!--                </template>-->
+<!--              </el-popconfirm>-->
+<!--              <el-button link type="primary" size="small" @click="handleDetails(scope.row)"-->
+<!--              >详情</el-button-->
+<!--              >-->
+<!--            </template>-->
+<!--          </el-table-column>-->
+        </el-table>
+
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -99,7 +135,9 @@ export default {
   data() {
     return {
       form: {},
+      details: [],
       dialogVisible: false,
+      detailsVisible: false,
       search: '',
       tableData: [],
       currentPage: 1,
@@ -195,6 +233,22 @@ export default {
                 message: "删除失败"
               });
             }
+          }
+      )
+    },
+    handleDetails(row) {
+      this.detailsVisible = true;
+      const f = JSON.parse(JSON.stringify(row));
+      request.get("http://localhost:9090/details", {
+        params: {
+          id: f.id
+        }
+      }).then(
+          res => {
+            console.log('resp=');
+            console.log(res);
+            this.details = res.data;
+            console.log(this.details);
           }
       )
     }
